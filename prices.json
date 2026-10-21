@@ -1,0 +1,19 @@
+{
+  "currency": "RUB",
+  "usn_percent": 6,
+  "services": {
+    "lsk": {
+      "name": "Личная стратегическая сессия",
+      "base_price": 135000
+    },
+    "audit": {
+      "name": "Аудит команды и HR-системы",
+      "base_price": 79500
+    },
+    "support": {
+      "name": "Сопровождение",
+      "base_price": 150000
+    }
+  },
+  "additional_hour": 26600
+}
