@@ -121,23 +121,29 @@ client_data["client_passport"] = (
 )
 
 #Проверка корректности ввода даты и органа выдачи паспорта 
-def is_valid_date(value):
-    try:
-        datetime.strptime(value, "%d.%m.%Y")
-    except ValueError:
-        return False
+def read_date(prompt, value=None):
+    while True:
+        if value is None:
+            value = input(prompt).strip()
 
-    return True
+        try:
+            return datetime.strptime(value, "%d.%m.%Y")
+
+        except ValueError:
+            print("Введите корректную дату в формате ДД.ММ.ГГГГ.")
+            value = None
 
 while not client_data["client_passport_issued"].strip():
     client_data["client_passport_issued"] = input(
         "Укажите корректно, кем выдан паспорт:\n"
     ).strip()
 
-while not is_valid_date(client_data["client_passport_issued_date"]):
-    client_data["client_passport_issued_date"] = input(
-        "Введите корректную дату выдачи в формате ДД.ММ.ГГГГ:\n"
-    ).strip()
+passport_date = read_date(
+    "Введите корректную дату выдачи паспорта в формате ДД.ММ.ГГГГ:\n",
+    client_data["client_passport_issued_date"]
+)
+
+client_data["client_passport_issued_date"] = passport_date.strftime("%d.%m.%Y")
 
 #Проверка телефона
 def is_valid_phone(phone):
@@ -228,32 +234,47 @@ contract_fields = client_data.copy()
 contract_fields["client_signature"] = client_data["client_fio"]
 contract_fields["final_price"] = final_price
 
-contract_date = input("Введите дату договора в формате ДД.ММ.ГГГГ:\n").strip()
-
-while not is_valid_date(contract_date):
-    contract_date = input("Введите корректную дату договора в формате ДД.ММ.ГГГГ:\n").strip()
-
-contract_date_correct = datetime.strptime(contract_date, "%d.%m.%Y")
+contract_date_correct = read_date(
+    "Введите дату договора в формате ДД.ММ.ГГГГ:\n"
+)
 
 contract_fields["number"] = contract_date_correct.strftime("%d-%m-%Y")
 contract_fields["contract_date_long"] = contract_date_correct.strftime("%d.%m.%Y")
 contract_fields["year"] = contract_date_correct.year
 
+#Подготовка текста для договора сопровождения
+def support_text(prompt):
+    value = input(prompt).strip()
+
+    while not value:
+        value = input("Поле не должно быть пустым. Введите значение:\n").strip()
+
+    return value
+
+def support_lenth(prompt):
+    while True:
+        value = input(prompt).strip()
+
+        if value.isascii() and value.isdigit():
+            number = int(value)
+
+            if number > 0:
+                return number
+
+        print("Введите целое число больше нуля.")
+
 
 #Подготовка даты проведения услуги
-if service in ("lsk", "audit"):
-    service_date = input(
+if service in ("lsk", "audit", "support"):
+    service_date_object = read_date(
         "Введите дату проведения услуги в формате ДД.ММ.ГГГГ:\n"
-    ).strip()
-
-    while not is_valid_date(service_date):
-        service_date = input(
-            "Введите корректную дату проведения услуги в формате ДД.ММ.ГГГГ:\n"
-        ).strip()
-
-    service_date_object = datetime.strptime(service_date, "%d.%m.%Y")
+    )
 
     contract_fields["service_date_long"] = service_date_object.strftime("%d.%m.%Y")
+
+#Подготовка кол-ва встреч в рамках Сопровождения
+if service == "support":
+    contract_fields["meeting_count"] = support_lenth("Введите количество встреч по программе сопровождения:\n")
 
 #Подготовка стоимости прописью
 def ruble_word(amount):
@@ -274,6 +295,13 @@ contract_fields["final_currency"] = ruble_word(final_price)
 
 #Заполнение полей договора данными от пользователя и сохранение договора
 template_fields = template.get_undeclared_template_variables()
+
+if service in ("audit", "support"):
+    extra_price = prices["additional_hour"]
+
+    contract_fields["extra_price"] = extra_price
+    contract_fields["extra_price_words"] = num2words(extra_price, lang="ru")
+
 missing_fields = template_fields - contract_fields.keys()
 
 if missing_fields:
