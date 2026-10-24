@@ -1,0 +1,21 @@
+# Настоящие реквизиты исполнителя
+/provider_data/provider.json
+
+# Готовые документы и информация о внесенных данных
+/data/
+/output/
+
+# Виртуальное окружение Python
+/.venv/
+/venv/
+
+# Служебные файлы Python
+__pycache__/
+*.py[cod]
+
+# Служебные файлы macOS
+.DS_Store
+
+# Временные файлы Word и LibreOffice
+~$*
+.~lock.*#
