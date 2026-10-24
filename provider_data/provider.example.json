@@ -1,0 +1,18 @@
+{
+    "executor_fio": "Иванов Иван Иванович",
+    "executor_short_name": "Иванов А.С.",
+    "executor_signature": "А.С. Иванов",
+    "executor_ogrnip": "000000000000000",
+    "executor_ogrnip_date": "01.01.2020",
+    "executor_address": "000000, Учебный город, Примерная улица, дом 1",
+    "executor_inn": "000000000000",
+    "executor_account": "00000000000000000000",
+    "executor_bank": "АО «Учебный банк»",
+    "executor_corr_account": "00000000000000000000",
+    "executor_bik": "000000000",
+    "executor_okpo": "0000000000",
+    "executor_oktmo": "00000000000",
+    "executor_okved": "00.00",
+    "executor_email": "executor@example.com",
+    "executor_phone": "+7 (000) 000-00-00"
+}
